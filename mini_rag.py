@@ -37,14 +37,21 @@ def cosine_similarity(vec1, vec2):
     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
 # QUERY + RETRIEVAL LOGIC
+#****#
 query = "Why did Pump 7 fail during the freeze?"
-
+#****#
 query_embedding = get_embedding(query)
 
 scored_docs = []
 
 for item in vector_store:
     score = cosine_similarity(query_embedding, item["embedding"])
+
+    #Deterministic boost- score modifier
+    if "Pump 7" in item["text"]:
+#****#
+        score += 0.05
+#****#    
     scored_docs.append((score, item["text"]))
 
 # Sort highest similarity first
@@ -56,11 +63,17 @@ for score, text in scored_docs:
     print(text)
 
 # ASSEMBLE CONTEXT AND CALL GENERATIVE MODEL
-
-# Select top 2 chunks
+# Simulate Token Headroom Awareness with maxchars variable
+#****#
+MAX_CONTEXT_CHARS = 500
+#****#
+# Select top 2 chunks (hard-coded "scored_docs[:2]" top-k retrieval with k=2.)
+#****#
 top_context = [doc for _, doc in scored_docs[:2]]
+#****#
 
 context_text = "\n\n".join(top_context)
+context_text = context_text[:MAX_CONTEXT_CHARS]
 
 print("\nRetrieved Context:\n")
 print(context_text)
@@ -68,6 +81,9 @@ print(context_text)
 response = client.chat.completions.create(
     model="gpt-4o-mini",
     messages=[
+    #****#
+    #   {"role": "system", "content": "Answer strictly using only the provided context. Do not infer beyond it. If the answer is not fully supported by the context, say that the information is insufficient."},
+    #****#
         {"role": "system", "content": "You are an industrial telemetry assistant."},
         {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {query}"}
     ]
