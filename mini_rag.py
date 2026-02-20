@@ -69,9 +69,10 @@ response = client.chat.completions.create(
     model="gpt-4o-mini",
     messages=[
         {"role": "system", "content": "You are an industrial telemetry assistant."},
-        {"role": "user", "content": query}
+        {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {query}"}
     ]
+
 )
 
-print("\nModel Response WITHOUT RAG:\n")
+print("\nModel Response:\n")
 print(response.choices[0].message.content)
