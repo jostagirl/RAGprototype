@@ -54,6 +54,9 @@ def check_query_specificity(query):
 # QUERY + RETRIEVAL LOGIC
 #****#
 query = "Why did Pump 7 fail during the freeze?"
+#query = "What is the weather in Kona, Hawaii?"
+#query = "Why did the pump fail?"
+#query = "What happened?"
 #****#
 
 # VECTOR STORE (INGESTION)
@@ -100,7 +103,7 @@ else:
     # ASSEMBLE CONTEXT AND CALL GENERATIVE MODEL
     # Simulate Token Headroom Awareness with maxchars variable
 #****#
-    MAX_CONTEXT_CHARS = 500
+    MAX_CONTEXT_CHARS = 200
     k = 2
     MIN_SCORE_THRESHOLD = 0.60
 #****#
