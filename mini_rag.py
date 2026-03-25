@@ -59,21 +59,18 @@ for item in vector_store:
 # Sort highest similarity first
 scored_docs.sort(reverse=True)
 
-print("\nTop Matches:")
-for score, text in scored_docs:
-    print(f"\nScore: {score:.4f}")
-    print(text)
-
 # ASSEMBLE CONTEXT AND CALL GENERATIVE MODEL
 # Simulate Token Headroom Awareness with maxchars variable
 #****#
 MAX_CONTEXT_CHARS = 500
-#****#
-# Select top 2 chunks with minimum confidence threshold
-#****#
 k = 2
 MIN_SCORE_THRESHOLD = 0.60
 #****#
+
+print("\nCandidates retrieved:")
+for score, text in scored_docs[:k]:
+    status = "✓ PASSED" if score >= MIN_SCORE_THRESHOLD else "✗ FILTERED"
+    print(f"  [{status}] Score: {score:.4f} — {text[:60]}...")
 top_chunks = [doc for doc in scored_docs[:k] if doc[0] >= MIN_SCORE_THRESHOLD]
 
 if not top_chunks:
