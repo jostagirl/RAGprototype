@@ -20,7 +20,8 @@ def get_embedding(text):
 
 # QUERY + RETRIEVAL LOGIC
 #****#
-query = "Why did Pump 7 fail during the freeze?"
+#query = "Why did Pump 7 fail during the freeze?"
+query = "What is the weather in Kona, Hawaii?"
 #****#
 
 # VECTOR STORE (INGESTION)
