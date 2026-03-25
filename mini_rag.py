@@ -67,28 +67,33 @@ for score, text in scored_docs:
 #****#
 MAX_CONTEXT_CHARS = 500
 #****#
-# Select top 2 chunks (hard-coded "scored_docs[:2]" top-k retrieval with k=2.)
+# Select top 2 chunks with minimum confidence threshold
 #****#
-top_context = [doc for _, doc in scored_docs[:2]]
+k = 2
+MIN_SCORE_THRESHOLD = 0.60
 #****#
+top_chunks = [doc for doc in scored_docs[:k] if doc[0] >= MIN_SCORE_THRESHOLD]
 
-context_text = "\n\n".join(top_context)
-context_text = context_text[:MAX_CONTEXT_CHARS]
+if not top_chunks:
+    print("\n⚠ ABSTAIN: No retrieved chunks met the minimum confidence threshold.")
+    print("System response: Insufficient evidence to answer this query reliably.")
+else:
+    context_text = "\n\n".join([doc[1] for doc in top_chunks])
+    context_text = context_text[:MAX_CONTEXT_CHARS]
 
-print("\nRetrieved Context:\n")
-print(context_text)
+    print("\nRetrieved Context:\n")
+    print(context_text)
 
-response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=[
-    #****#
-    #   {"role": "system", "content": "Answer strictly using only the provided context. Do not infer beyond it. If the answer is not fully supported by the context, say that the information is insufficient."},
-    #****#
-        {"role": "system", "content": "You are an industrial telemetry assistant."},
-        {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {query}"}
-    ]
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+        #****#
+        #   {"role": "system", "content": "Answer strictly using only the provided context. Do not infer beyond it. If the answer is not fully supported by the context, say that the information is insufficient."},
+        #****#
+            {"role": "system", "content": "You are an industrial telemetry assistant."},
+            {"role": "user", "content": f"Context:\n{context_text}\n\nQuestion: {query}"}
+        ]
+    )
 
-)
-
-print("\nModel Response:\n")
-print(response.choices[0].message.content)
+    print("\nModel Response:\n")
+    print(response.choices[0].message.content)
