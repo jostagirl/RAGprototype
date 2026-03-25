@@ -22,6 +22,7 @@ def get_embedding(text):
 #****#
 REQUIRED_TERMS = ["pump", "valve", "sensor", "motor", "failure", "maintenance"]
 MIN_QUERY_WORDS = 4
+ASSET_IDENTIFIERS = ["pump 7", "pump 3", "valve 2"]  # expand as your system grows
 #****#
 
 def check_query_specificity(query):
@@ -31,6 +32,9 @@ def check_query_specificity(query):
     has_domain_term = any(term in query.lower() for term in REQUIRED_TERMS)
     if not has_domain_term:
         return False, "Query lacks a domain-specific term (asset, component, or event type)."
+    has_asset_id = any(asset in query.lower() for asset in ASSET_IDENTIFIERS)
+    if not has_asset_id:
+        return False, "Query must reference a specific asset (e.g. Pump 7, Valve 2)."
     return True, None
 
 # QUERY + RETRIEVAL LOGIC
