@@ -18,6 +18,11 @@ def get_embedding(text):
     )
     return response.data[0].embedding
 
+# QUERY + RETRIEVAL LOGIC
+#****#
+query = "Why did Pump 7 fail during the freeze?"
+#****#
+
 # VECTOR STORE (INGESTION)
 vector_store = []
 
@@ -28,6 +33,7 @@ for doc in documents:
         "embedding": embedding
     })
 
+print(f"Query: {query}")
 print ("documents embedded:", len(vector_store))
 
 # COSINE SIMILARITY
@@ -36,10 +42,6 @@ def cosine_similarity(vec1, vec2):
     vec2 = np.array(vec2)
     return np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2))
 
-# QUERY + RETRIEVAL LOGIC
-#****#
-query = "Why did Pump 7 fail during the freeze?"
-#****#
 query_embedding = get_embedding(query)
 
 scored_docs = []
