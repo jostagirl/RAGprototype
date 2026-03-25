@@ -25,6 +25,20 @@ MIN_QUERY_WORDS = 4
 ASSET_IDENTIFIERS = ["pump 7", "pump 3", "valve 2"]  # expand as your system grows
 #****#
 
+# RESPONSE CONFIDENCE CHECK
+#****#
+UNCERTAINTY_PHRASES = [
+    "i don't have", "i'm not sure", "it's unclear",
+    "insufficient information", "cannot determine",
+    "it may be", "possibly", "i cannot confirm"
+]
+#****#
+
+def check_response_confidence(response_text):
+    lowered = response_text.lower()
+    flagged = [p for p in UNCERTAINTY_PHRASES if p in lowered]
+    return flagged
+
 def check_query_specificity(query):
     words = query.strip().split()
     if len(words) < MIN_QUERY_WORDS:
@@ -129,5 +143,11 @@ else:
             ]
         )
 
+        response_text = response.choices[0].message.content
         print("\nModel Response:\n")
-        print(response.choices[0].message.content)
+        print(response_text)
+
+        flags = check_response_confidence(response_text)
+        if flags:
+            print(f"\n⚠ CONFIDENCE FLAG: Model expressed uncertainty — {flags}")
+            print("Recommend: human review before acting on this response.")
