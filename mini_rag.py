@@ -107,6 +107,17 @@ else:
         print("\nRetrieved Context:\n")
         print(context_text)
 
+#****#
+        TRUNCATION_WARNING_RATIO = 0.95
+#****#
+        context_was_truncated = (
+            MAX_CONTEXT_CHARS is not None and
+            len(context_text) >= MAX_CONTEXT_CHARS * TRUNCATION_WARNING_RATIO
+        )
+
+        if context_was_truncated:
+            print("\n⚠ TRUNCATION WARNING: Context may have been cut. Response reliability reduced.")
+
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
